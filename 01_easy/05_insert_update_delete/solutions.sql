@@ -8,23 +8,30 @@ BEGIN;   -- everything below is undone by the ROLLBACK at the end
 -- Q1. JSONB literal is a string cast implicitly to jsonb; it is validated on insert.
 INSERT INTO products (product_name, category_id, price, cost, stock_qty, attributes, created_at)
 VALUES ('Gaming Mouse', 12, 59.90, 25, 40, '{"brand":"Clicko","dpi":16000}', CURRENT_DATE)
-RETURNING product_id;                                       -- 25
+RETURNING product_id;                                       -- 25 on a fresh database
 
 
--- Q2. RETURNING avoids a fragile "SELECT MAX(id)" (wrong if two sessions insert).
+-- Q2. RETURNING shows the generated ids. Generated ids are NOT predictable:
+--     identity values used by rolled-back transactions (e.g. if you ran the
+--     lesson first) are skipped, so never hard-code "21" or "47".
+--     currval() returns the value THIS session just generated for a sequence,
+--     so it's safe even with other users inserting at the same time.
+--     (Unlike SELECT MAX(id), which could return someone else's row.)
 INSERT INTO customers (first_name, last_name, email, city, country, signup_date)
 VALUES ('Tara', 'Menon', 'tara.menon@mail.com', 'Kochi', 'India', CURRENT_DATE)
-RETURNING customer_id;                                      -- 21
+RETURNING customer_id;                                      -- 21 on a fresh database
 
 INSERT INTO orders (customer_id, employee_id, order_date, status)
-VALUES (21, NULL, now(), 'pending')                         -- NULL employee = online order
-RETURNING order_id;                                         -- 47
+VALUES (currval(pg_get_serial_sequence('customers', 'customer_id')),   -- Tara's new id
+        NULL, now(), 'pending')                             -- NULL employee = online order
+RETURNING order_id;                                         -- 47 on a fresh database
 
 INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount)
-VALUES (47, 25, 1, 59.90, 0),
-       (47, 18, 2, 14.99, 0.05);                            -- discount stored as a fraction
--- In application code you'd capture the ids from RETURNING into variables
--- instead of hard-coding 21 / 47 (see 02_medium/08 for INSERT ... SELECT / CTEs).
+VALUES (currval(pg_get_serial_sequence('orders', 'order_id')),
+        currval(pg_get_serial_sequence('products', 'product_id')), 1, 59.90, 0),   -- the Gaming Mouse
+       (currval(pg_get_serial_sequence('orders', 'order_id')), 18, 2, 14.99, 0.05);  -- discount as a fraction
+-- In application code you'd read the ids from RETURNING into variables;
+-- 02_medium/06 shows how to chain all three inserts in one statement with CTEs.
 
 
 -- Q3. Preview, then update with the identical WHERE.

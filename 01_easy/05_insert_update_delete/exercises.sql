@@ -10,7 +10,7 @@ BEGIN;
 -- Q1. A new product arrives: 'Gaming Mouse', category Gaming (12), price 59.90,
 --     cost 25, stock 40, created today, attributes {"brand":"Clicko","dpi":16000}.
 --     Insert it and return its new product_id.
---     Expected: product_id 25
+--     Expected: product_id 25 (on a freshly loaded database — ids used by rolled-back inserts are skipped)
 
 
 
