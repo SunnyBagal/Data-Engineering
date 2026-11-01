@@ -15,7 +15,7 @@
 -- Q2. Order counts with CUBE over (country, status). How many rows are
 --     produced? Which country has the most orders overall, and which status
 --     is most common overall?
---     Expected: India 19 orders; 'delivered' 36
+--     Expected: 24 rows; India 19 orders; 'delivered' 36
 
 
 
@@ -40,7 +40,7 @@
 
 -- Q6. Explode products.attributes->'tags' with LATERAL and count products per
 --     tag; also list products that have NO tags (LEFT JOIN LATERAL … ON TRUE).
---     Expected: 7 distinct tags; 16 products without tags
+--     Expected: 7 distinct tags; 17 products without tags
 
 
 

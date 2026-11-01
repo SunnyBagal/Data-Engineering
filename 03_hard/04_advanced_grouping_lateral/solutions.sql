@@ -112,7 +112,7 @@ SELECT p.product_name
 FROM products p
 LEFT JOIN LATERAL jsonb_array_elements_text(p.attributes -> 'tags') AS t(tag) ON TRUE
 WHERE t.tag IS NULL
-ORDER BY p.product_name;                                    -- 16 products
+ORDER BY p.product_name;                                    -- 17 products
 
 
 -- Q7. LAG must be computed over ALL employees of the department before LIMIT,
