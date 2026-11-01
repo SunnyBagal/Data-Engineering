@@ -38,7 +38,7 @@
 -- Q6. Order lines where the customer got any discount AND the discounted line
 --     revenue (quantity * unit_price * (1 - discount)) is above 500.
 --     Show order_id, product_id, discount and revenue rounded to 2 decimals.
---     Expected: 6 rows
+--     Expected: 8 rows
 
 
 
