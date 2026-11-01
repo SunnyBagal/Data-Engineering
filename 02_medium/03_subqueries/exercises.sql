@@ -47,4 +47,4 @@
 --     (b) Inside a transaction: set stock_qty to 0 for every product whose
 --         price is above the average price of its OWN category (correlated
 --         subquery in UPDATE), return the affected names, then ROLLBACK.
---     Expected: (a) 3 laptops  (b) check how many rows were updated
+--     Expected: (a) 3 laptops  (b) 12 rows updated
